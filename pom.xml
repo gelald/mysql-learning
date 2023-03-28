@@ -10,6 +10,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>mysql-base</module>
+        <module>mybatis-plus-common</module>
+        <module>batch-process</module>
     </modules>
 
     <properties>
