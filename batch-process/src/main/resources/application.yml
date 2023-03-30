@@ -1,5 +1,5 @@
 server:
-  port: 9891
+  port: 9892
 
 logging:
   config: classpath:log4j2-spring.xml
@@ -20,14 +20,17 @@ spring:
 mybatis-plus:
   global-config:
     db-config:
-      id-type: assign_id
+      # 数据库使用id自增字段
+      id-type: auto
   configuration:
     #在控制台中打印SQL语句
-    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     #下划线命名自动转为驼峰命名
     map-underscore-to-camel-case: true
-  mapper-locations: classpath*:/com/github/gelald/mpcommon/mapper/**/*.xml
+    default-executor-type: batch
+
+  mapper-locations: classpath*:/com/github/gelald/batch/mapper/**/*.xml
 
 knife:
-  title: MyBatis-Plus 增删查改及其他常用操作
-  base-package: com.github.gelald.mpcommon
+  title: mysql 批量数据处理
+  base-package: com.github.gelald.batch

@@ -1,9 +1,8 @@
-package com.github.gelald.mpcommon.interceptor;
+package com.github.gelald.mysql.base.interceptor;
 
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import org.slf4j.MDC;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author WuYingBin
  * date: 2023/3/16
  */
-@Component
 public class LogInterceptor implements HandlerInterceptor {
     private static final String TRACE_ID = "TRACE_ID";
 

@@ -1,8 +1,7 @@
-package com.github.gelald.mpcommon.interceptor;
+package com.github.gelald.mysql.base.interceptor;
 
 import cn.hutool.core.util.StrUtil;
-import com.github.gelald.mpcommon.context.CurrentUserContext;
-import org.springframework.stereotype.Component;
+import com.github.gelald.mysql.base.context.CurrentUserContext;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,13 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 拦截器 把当前登录人存放到内存中
+ *
  * @author WuYingBin
  * date: 2023/3/16
  */
-@Component
 public class CurrentUserInterceptor implements HandlerInterceptor {
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // 从request中获取当前的用户id
         String userId = request.getHeader("userId");
         if (StrUtil.isBlankIfStr(userId)) {

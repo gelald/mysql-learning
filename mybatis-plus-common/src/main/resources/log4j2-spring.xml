@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="fatal">
+    <Properties>
+        <!--配置日志文件夹的名称和生成路径 -->
+        <Property name="baseDir" value=".logs/mybatis-plus-common"/>
+    </Properties>
+
+    <Appenders>
+        <!--Console节点用来定义输出到控制台的Appender-->
+        <Console name="console" target="SYSTEM_OUT">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） -->
+            <ThresholdFilter level="info"
+                             onMatch="ACCEPT" onMismatch="DENY"/>
+            <!--控制台彩色输出-->
+            <PatternLayout
+                    pattern="[%X{TRACE_ID}] %d %highlight{%-5level}{ERROR=Bright RED, WARN=Bright Yellow, INFO=Bright Green,
+                     DEBUG=Bright Cyan, TRACE=Bright White} %style{[%t]}{bright,magenta} %style{%c{1.}.%M(%L)}{cyan}: %msg%n"/>
+        </Console>
+
+        <!--File节点用来定义输出到指定位置的文件的Appender-->
+        <!--RollingFile节点用来定义超过指定条件自动删除旧的创建新的Appender-->
+        <!--debug级别日志文件输出-->
+        <RollingFile name="debug_appender" fileName="${baseDir}/${date:yyyy-MM-dd}-debug.log"
+                     filePattern="${baseDir}/debug_%i.log.%d{yyyy-MM-dd}">
+            <!-- 过滤器 -->
+            <Filters>
+                <!-- 限制日志级别在debug及以上在info以下 -->
+                <ThresholdFilter level="debug"/>
+                <ThresholdFilter level="info" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <!-- 日志格式 -->
+            <PatternLayout pattern="[%X{TRACE_ID}] [%d{HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+            <!-- 策略 -->
+            <Policies>
+                <!-- 每隔一天转存 -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!-- 文件大小 -->
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+        </RollingFile>
+
+        <!-- info级别日志文件输出 -->
+        <RollingFile name="info_appender" fileName="${baseDir}/${date:yyyy-MM-dd}-info.log"
+                     filePattern="${baseDir}/info_%i.log.%d{yyyy-MM-dd}">
+            <!-- 过滤器 -->
+            <Filters>
+                <!-- 限制日志级别在info及以上在error以下 -->
+                <ThresholdFilter level="info"/>
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <!-- 日志格式 -->
+            <PatternLayout pattern="[%X{TRACE_ID}] [%d{HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+            <!-- 策略 -->
+            <Policies>
+                <!-- 每隔一天转存 -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!-- 文件大小 -->
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+        </RollingFile>
+
+        <!-- error级别日志文件输出 -->
+        <RollingFile name="error_appender" fileName="${baseDir}/${date:yyyy-MM-dd}-error.log"
+                     filePattern="${baseDir}/error_%i.log.%d{yyyy-MM-dd}">
+            <!-- 过滤器 -->
+            <Filters>
+                <!-- 限制日志级别在error及以上 -->
+                <ThresholdFilter level="error"/>
+            </Filters>
+            <!-- 日志格式 -->
+            <PatternLayout pattern="[%X{TRACE_ID}] [%d{HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+            <Policies>
+                <!-- 每隔一天转存 -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!-- 文件大小 -->
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="debug_appender"/>
+            <AppenderRef ref="info_appender"/>
+            <AppenderRef ref="error_appender"/>
+        </Root>
+
+    </Loggers>
+</Configuration>
+
+        <!--
+
+        日志级别机制：如果一条日志信息的级别大于等于配置文件的级别，就记录。
+        trace：追踪，就是程序推进一下，可以写个trace输出
+        debug：调试，一般作为最低级别，trace基本不用。
+        info：输出重要的信息，使用较多
+        warn：警告，有些信息不是错误信息，但也要给程序员一些提示。
+        error：错误信息。用的也很多。
+        fatal：致命错误。
+
+
+
+        默认格式是%m%n
+        %d或%date{yyyy-MM-dd HH:mm:ss, SSS} : 日志生产时间,输出到毫秒的时间
+        %-5level : 输出日志级别，-5表示左对齐并且固定输出5个字符，如果不足在右边补0
+        %c或%logger{36} : Java全类名，{36}最长36个字符
+        %F : Java类名
+        %C : Logger的名称
+        %t : 输出当前线程名称
+        %p : 日志输出格式
+        %m或%msg : 日志内容，即 logger.info(“message”)
+        %n : 换行符
+        %L : 行号
+        %M : 日志方法名
+        %l : 输出语句所在的行数, 包括类名、方法名、文件名、行数
+        %thread : 表示线程名
+        hostName : 本地机器名
+        hostAddress : 本地ip地址
+
+        -->

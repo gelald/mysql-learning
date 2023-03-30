@@ -27,6 +27,7 @@ public class ExceptionLogAdvice {
         if (args[0] instanceof Exception) {
             Exception exception = (Exception) args[0];
             log.error(exception.getMessage());
+            exception.printStackTrace();
         }
     }
 }

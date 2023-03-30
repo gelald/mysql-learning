@@ -1,7 +1,7 @@
 package com.github.gelald.mpcommon.handler;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.github.gelald.mpcommon.context.CurrentUserContext;
+import com.github.gelald.mysql.base.context.CurrentUserContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;

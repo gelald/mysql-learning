@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.gelald.batch.mapper.MaintainMapper">
+    <resultMap id="resultMap" type="com.github.gelald.batch.entity.Maintain">
+        <id property="maintainId" column="id" jdbcType="INTEGER"/>
+        <result property="maintainNum" column="maintain_num" jdbcType="VARCHAR"/>
+        <result property="maintainName" column="maintain_name" jdbcType="VARCHAR"/>
+        <result property="equipmentNum" column="equipment_num" jdbcType="BIGINT"/>
+        <result property="maintainType" column="maintain_type" jdbcType="INTEGER"/>
+        <result property="functionary" column="functionary" jdbcType="VARCHAR"/>
+        <result property="maintainDuration" column="maintain_duration" jdbcType="VARCHAR"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="maintainStatus" column="maintain_status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <delete id="clearData">
+        delete
+        from batch_maintain
+        where maintain_id > 0
+    </delete>
+
+    <insert id="insertMaintain">
+        insert into batch_maintain (maintain_num, maintain_name, equipment_num, maintain_type, functionary,
+                                    maintain_duration, start_time, end_time, maintain_status)
+        values (#{maintain.maintainNum}, #{maintain.maintainName}, #{maintain.equipmentNum}, #{maintain.maintainType},
+                #{maintain.functionary}, #{maintain.maintainDuration}, #{maintain.startTime}, #{maintain.endTime},
+                #{maintain.maintainStatus})
+    </insert>
+
+    <insert id="insertBatchMaintain">
+        insert into batch_maintain (maintain_num, maintain_name, equipment_num, maintain_type, functionary,
+        maintain_duration, start_time, end_time, maintain_status)
+        values
+        <foreach collection='maintainList' item='maintain' separator=','>
+            (#{maintain.maintainNum}, #{maintain.maintainName}, #{maintain.equipmentNum}, #{maintain.maintainType},
+            #{maintain.functionary}, #{maintain.maintainDuration}, #{maintain.startTime}, #{maintain.endTime},
+            #{maintain.maintainStatus})
+        </foreach>
+    </insert>
+
+</mapper>

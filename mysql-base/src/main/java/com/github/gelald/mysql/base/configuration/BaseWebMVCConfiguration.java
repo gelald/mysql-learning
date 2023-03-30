@@ -1,7 +1,12 @@
 package com.github.gelald.mysql.base.configuration;
 
+import com.github.gelald.mysql.base.interceptor.CurrentUserInterceptor;
+import com.github.gelald.mysql.base.interceptor.LogInterceptor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -10,6 +15,7 @@ import java.util.List;
  * @author WuYingBin
  * date: 2023/3/15
  */
+@Configuration
 public class BaseWebMVCConfiguration implements WebMvcConfigurer {
     /**
      * 交换MappingJackson2HttpMessageConverter与第一位元素
@@ -27,5 +33,28 @@ public class BaseWebMVCConfiguration implements WebMvcConfigurer {
                 break;
             }
         }
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(currentUserInterceptor())
+                .addPathPatterns("/**/add**/**")
+                .addPathPatterns("/**/update**/**")
+                //因为引入了逻辑删除
+                .addPathPatterns("/**/delete**/**");
+        registry.addInterceptor(logInterceptor())
+                .addPathPatterns("/**")
+                //最高级
+                .order(-1);
+    }
+
+    @Bean
+    public CurrentUserInterceptor currentUserInterceptor() {
+        return new CurrentUserInterceptor();
+    }
+
+    @Bean
+    public LogInterceptor logInterceptor() {
+        return new LogInterceptor();
     }
 }
