@@ -1,7 +1,6 @@
 package com.github.gelald.batch.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.github.gelald.batch.dto.ExcelExportOption;
 import com.github.gelald.batch.entity.Maintain;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,5 +15,5 @@ public interface MaintainService extends IService<Maintain> {
 
     List<Maintain> generatingMaintainList(int size);
 
-    void exportToExcel(ExcelExportOption excelExportOption, HttpServletResponse response);
+    void exportToExcel(Long perReadSize, HttpServletResponse response);
 }

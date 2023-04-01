@@ -1,6 +1,7 @@
 create table batch_maintain
 (
-    maintain_id       int           null,
+    maintain_id       int auto_increment
+        primary key,
     maintain_num      varchar(255)  null,
     maintain_name     varchar(1024) null,
     equipment_num     bigint        null,

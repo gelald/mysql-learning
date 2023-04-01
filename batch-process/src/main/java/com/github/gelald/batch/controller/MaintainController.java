@@ -1,8 +1,6 @@
 package com.github.gelald.batch.controller;
 
 import com.alibaba.excel.EasyExcel;
-import com.github.gelald.batch.dto.ExcelExportOption;
-import com.github.gelald.batch.dto.ExcelImportOption;
 import com.github.gelald.batch.entity.Maintain;
 import com.github.gelald.batch.enums.ImportStrategyEnum;
 import com.github.gelald.batch.factory.ImportStrategyFactory;
@@ -48,34 +46,28 @@ public class MaintainController {
     @ApiOperation("程序生成并批量导入数据")
     @GetMapping("/generate-and-import")
     public String generateData(@RequestParam("size") @Min(1) @Max(400000) Integer size,
-                               @RequestParam("enum") ImportStrategyEnum importEnum) {
+                               @RequestParam("enum") ImportStrategyEnum importStrategyEnum) {
         List<Maintain> maintains = this.maintainService.generatingMaintainList(size);
-        String strategyName = importEnum.getStrategyName();
+        String strategyName = importStrategyEnum.getStrategyName();
         ImportStrategyFactory instance = ImportStrategyFactory.getInstance();
         AbstractImportStrategy strategy = instance.getStrategy(strategyName);
         strategy.doImport(maintains);
         return "success";
     }
 
-    /*
-     * 100000行，每次读10000行保存
-     * 事务导入：13.4s 13.4s 13.0s 12.2s 12.4s 13.4s 12.3s 12.5s
-     * 批量导入：3.69s 3.61s 4.05s 3.67s 3.79s 3.53s
-     * 事务+批量：3.71s 3.82s 3.62s 3.60s 3.61s 3.63s
-     * MyBatisPlus批量：5.70s 5.80s 5.54s 5.85s 5.80s 5.82s
-     */
     @ApiOperation("Excel数据批量导入到数据库")
-    @PostMapping("/import-from-excel")
-    public String importFromExcel(@RequestPart("file") MultipartFile multipartFile, ExcelImportOption excelImportOption) throws IOException {
-        EasyExcel.read(multipartFile.getInputStream(), Maintain.class, new ExcelDataListener(excelImportOption)).doReadAll();
+    @PostMapping(value = "/import-from-excel", consumes = "multipart/form-data;charset=UTF-8")
+    public String importFromExcel(@RequestPart("file") MultipartFile multipartFile,
+                                  @RequestParam("savePerScanRow") Integer savePerScanRow,
+                                  @RequestParam("importStrategy") ImportStrategyEnum importStrategyEnum) throws IOException {
+        EasyExcel.read(multipartFile.getInputStream(), Maintain.class, new ExcelDataListener(savePerScanRow, importStrategyEnum)).doReadAll();
         return "success";
     }
 
     @ApiOperation("数据批量导出到Excel文件")
-    @GetMapping("/export-to-excel")
-    public String exportToExcel(ExcelExportOption excelExportOption, HttpServletResponse response) {
-        this.maintainService.exportToExcel(excelExportOption, response);
-        return "success";
+    @GetMapping(value = "/export-to-excel", produces = "multipart/form-data;charset=UTF-8")
+    public void exportToExcel(@RequestParam("perReadSize") Long perReadSize, HttpServletResponse response) {
+        this.maintainService.exportToExcel(perReadSize, response);
     }
 
     @Autowired

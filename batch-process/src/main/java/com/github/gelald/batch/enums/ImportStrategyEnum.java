@@ -8,7 +8,7 @@ import lombok.Getter;
  */
 @Getter
 public enum ImportStrategyEnum {
-    JDBC_BATCH_TX_STRATEGY("jdbc-batch"),
+    JDBC_BATCH_STRATEGY("jdbc-batch"),
     MYBATIS_BATCH_STRATEGY("mybatis-batch"),
     MYBATIS_PLUS_BATCH_STRATEGY("mybatis-plus-batch");
     private final String strategyName;

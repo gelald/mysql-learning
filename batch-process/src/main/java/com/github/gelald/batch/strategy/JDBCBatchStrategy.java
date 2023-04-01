@@ -4,6 +4,7 @@ import com.github.gelald.batch.entity.Maintain;
 import com.github.gelald.batch.enums.ImportStrategyEnum;
 import com.github.gelald.batch.factory.ImportStrategyFactory;
 import com.github.gelald.batch.util.HikariCPUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
@@ -20,20 +21,15 @@ import java.util.List;
  * @author WuYingBin
  * date: 2022/12/26
  */
+@Slf4j
 @Component
 public class JDBCBatchStrategy extends AbstractImportStrategy {
     @Override
     void doRegistry() {
         ImportStrategyFactory instance = ImportStrategyFactory.getInstance();
-        instance.registry(ImportStrategyEnum.JDBC_BATCH_TX_STRATEGY.getStrategyName(), this);
+        instance.registry(ImportStrategyEnum.JDBC_BATCH_STRATEGY.getStrategyName(), this);
     }
 
-    /*
-    5w:3240,3428,3153
-    10w:6606,6281,7160
-    20w:12014,14157,14655
-    40w:23317,25490,22860
-     */
     @Override
     public void doImport(List<Maintain> maintains) {
         StopWatch stopWatch = new StopWatch();
@@ -62,20 +58,23 @@ public class JDBCBatchStrategy extends AbstractImportStrategy {
                 if (count % BATCH_SIZE == 0) {
                     // 一次性提交缓存区中的SQL语句
                     preparedStatement.executeBatch();
+                    log.info("本次提交{}条数据", BATCH_SIZE);
                     count = 0;
                 }
             }
             if (count != 0) {
                 preparedStatement.executeBatch();
+                log.info("最后提交{}条数据", BATCH_SIZE);
             }
             // 提交事务
             connection.commit();
+            log.info("事务提交");
         } catch (SQLException exception) {
             exception.printStackTrace();
         } finally {
             stopWatch.stop();
             HikariCPUtils.close(preparedStatement, connection);
-            System.out.println("jdbc批处理事务插入方式花费时间 ==> " + stopWatch.getLastTaskTimeMillis());
+            log.info("jdbc批处理事务插入方式花费时间 ==> {}毫秒", stopWatch.getLastTaskTimeMillis());
         }
     }
 

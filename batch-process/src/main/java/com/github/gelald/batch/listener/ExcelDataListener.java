@@ -3,8 +3,8 @@ package com.github.gelald.batch.listener;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.read.listener.ReadListener;
 import com.alibaba.excel.util.ListUtils;
-import com.github.gelald.batch.dto.ExcelImportOption;
 import com.github.gelald.batch.entity.Maintain;
+import com.github.gelald.batch.enums.ImportStrategyEnum;
 import com.github.gelald.batch.factory.ImportStrategyFactory;
 import com.github.gelald.batch.strategy.AbstractImportStrategy;
 import org.springframework.util.CollectionUtils;
@@ -16,23 +16,23 @@ import java.util.List;
  * date: 2022/10/31
  */
 public class ExcelDataListener implements ReadListener<Maintain> {
-    private final int rowsBoundary;
+    private final int savePerScanRow;
 
     private final String importStrategy;
 
     private final List<Maintain> excelDataList;
 
-    public ExcelDataListener(ExcelImportOption excelImportOption) {
-        this.rowsBoundary = excelImportOption.getRowsBoundary();
-        this.excelDataList = ListUtils.newArrayListWithExpectedSize(rowsBoundary);
-        this.importStrategy = excelImportOption.getImportStrategy();
+    public ExcelDataListener(Integer savePerScanRow, ImportStrategyEnum importStrategyEnum) {
+        this.savePerScanRow = savePerScanRow;
+        this.excelDataList = ListUtils.newArrayListWithExpectedSize(this.savePerScanRow);
+        this.importStrategy = importStrategyEnum.getStrategyName();
     }
 
     @Override
     public void invoke(Maintain data, AnalysisContext context) {
         excelDataList.add(data);
         //size大于预定义的数量就执行一次批量插入
-        if (excelDataList.size() >= rowsBoundary) {
+        if (excelDataList.size() >= savePerScanRow) {
             saveData(excelDataList);
             //清理集合便于GC回收
             excelDataList.clear();
