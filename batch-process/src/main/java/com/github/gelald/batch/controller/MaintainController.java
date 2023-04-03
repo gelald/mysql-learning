@@ -5,7 +5,6 @@ import com.github.gelald.batch.entity.Maintain;
 import com.github.gelald.batch.enums.ImportStrategyEnum;
 import com.github.gelald.batch.factory.ImportStrategyFactory;
 import com.github.gelald.batch.listener.ExcelDataListener;
-import com.github.gelald.batch.mapper.MaintainMapper;
 import com.github.gelald.batch.service.MaintainService;
 import com.github.gelald.batch.strategy.AbstractImportStrategy;
 import io.swagger.annotations.Api;
@@ -28,18 +27,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/maintain")
 public class MaintainController {
-    private MaintainMapper maintainMapper;
 
     private MaintainService maintainService;
 
     @ApiOperation("清除数据并预热连接池")
     @GetMapping("/clear")
     public String clearData() {
-        //删除数据的同时激活两个连接池
-        //使用了MyBatisPlus创建的连接池
-        this.maintainMapper.clearData();
-        //使用了自定义的连接池
-        this.maintainService.resetAutoIncrement();
+        this.maintainService.clearDataAndResetAutoIncrement();
         return "success";
     }
 
@@ -68,11 +62,6 @@ public class MaintainController {
     @GetMapping(value = "/export-to-excel", produces = "multipart/form-data;charset=UTF-8")
     public void exportToExcel(@RequestParam("perReadSize") Long perReadSize, HttpServletResponse response) {
         this.maintainService.exportToExcel(perReadSize, response);
-    }
-
-    @Autowired
-    public void setMaintainMapper(MaintainMapper maintainMapper) {
-        this.maintainMapper = maintainMapper;
     }
 
     @Autowired

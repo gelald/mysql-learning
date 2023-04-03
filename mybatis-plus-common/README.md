@@ -1,4 +1,4 @@
-# MyBatis-Plus-Common
+# mybatis-plus-common
 
 > 这个模块主要介绍 MyBaits-Plus 常用的操作
 

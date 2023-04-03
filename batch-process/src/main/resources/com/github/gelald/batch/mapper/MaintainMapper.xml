@@ -22,6 +22,11 @@
         where maintain_id > 0
     </delete>
 
+    <select id="resetAutoIncrement">
+        alter table batch_maintain
+            auto_increment = 1
+    </select>
+
     <insert id="insertMaintain">
         insert into batch_maintain (maintain_num, maintain_name, equipment_num, maintain_type, functionary,
                                     maintain_duration, start_time, end_time, maintain_status)

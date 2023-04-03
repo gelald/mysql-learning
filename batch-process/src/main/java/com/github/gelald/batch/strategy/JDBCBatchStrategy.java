@@ -3,11 +3,12 @@ package com.github.gelald.batch.strategy;
 import com.github.gelald.batch.entity.Maintain;
 import com.github.gelald.batch.enums.ImportStrategyEnum;
 import com.github.gelald.batch.factory.ImportStrategyFactory;
-import com.github.gelald.batch.util.HikariCPUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -24,6 +25,8 @@ import java.util.List;
 @Slf4j
 @Component
 public class JDBCBatchStrategy extends AbstractImportStrategy {
+    private DataSource dataSource;
+
     @Override
     void doRegistry() {
         ImportStrategyFactory instance = ImportStrategyFactory.getInstance();
@@ -37,7 +40,7 @@ public class JDBCBatchStrategy extends AbstractImportStrategy {
         PreparedStatement preparedStatement = null;
         stopWatch.start();
         try {
-            connection = HikariCPUtils.getConnection();
+            connection = dataSource.getConnection();
             // 开启事务手动提交
             connection.setAutoCommit(false);
             String sql = "insert into batch_maintain (maintain_num, maintain_name, equipment_num, maintain_type, functionary, maintain_duration, start_time, end_time, maintain_status) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -73,9 +76,26 @@ public class JDBCBatchStrategy extends AbstractImportStrategy {
             exception.printStackTrace();
         } finally {
             stopWatch.stop();
-            HikariCPUtils.close(preparedStatement, connection);
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
             log.info("jdbc批处理事务插入方式花费时间 ==> {}毫秒", stopWatch.getLastTaskTimeMillis());
         }
     }
 
+    @Autowired
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 }

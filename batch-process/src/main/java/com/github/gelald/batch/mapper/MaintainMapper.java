@@ -15,6 +15,8 @@ import java.util.List;
 public interface MaintainMapper extends BaseMapper<Maintain> {
     void clearData();
 
+    void resetAutoIncrement();
+
     void insertMaintain(@Param("maintain") Maintain maintain);
 
     void insertBatchMaintain(@Param("maintainList") List<Maintain> maintains);

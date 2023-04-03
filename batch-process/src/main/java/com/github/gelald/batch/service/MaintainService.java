@@ -11,7 +11,10 @@ import java.util.List;
  * date: 2022/12/26
  */
 public interface MaintainService extends IService<Maintain> {
-    void resetAutoIncrement();
+    /**
+     * 删除数据的同时激活连接池
+     */
+    void clearDataAndResetAutoIncrement();
 
     List<Maintain> generatingMaintainList(int size);
 

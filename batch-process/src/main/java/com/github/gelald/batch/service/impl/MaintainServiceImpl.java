@@ -12,7 +12,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.gelald.batch.entity.Maintain;
 import com.github.gelald.batch.mapper.MaintainMapper;
 import com.github.gelald.batch.service.MaintainService;
-import com.github.gelald.batch.util.HikariCPUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -22,9 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -41,19 +37,9 @@ public class MaintainServiceImpl extends ServiceImpl<MaintainMapper, Maintain> i
     private static final Long SHEET_MAX_SIZE = 1000000L;
 
     @Override
-    public void resetAutoIncrement() {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        try {
-            connection = HikariCPUtils.getConnection();
-            String sql = "alter table batch_maintain auto_increment = 1";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.executeUpdate();
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        } finally {
-            HikariCPUtils.close(preparedStatement, connection);
-        }
+    public void clearDataAndResetAutoIncrement() {
+        this.baseMapper.clearData();
+        this.baseMapper.resetAutoIncrement();
     }
 
     @Override
