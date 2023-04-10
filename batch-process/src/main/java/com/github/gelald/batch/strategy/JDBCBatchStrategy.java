@@ -33,6 +33,12 @@ public class JDBCBatchStrategy extends AbstractImportStrategy {
         instance.registry(ImportStrategyEnum.JDBC_BATCH_STRATEGY.getStrategyName(), this);
     }
 
+    /**
+     * 开启rewriteBatchedStatements前
+     * 3.4s、3.3s、3.3s
+     * 开启rewriteBatchedStatements后
+     * 2.3s、2.2s、2.3s
+     */
     @Override
     public void doImport(List<Maintain> maintains) {
         StopWatch stopWatch = new StopWatch();

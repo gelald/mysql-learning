@@ -34,6 +34,13 @@ public class MyBatisBatchStrategy extends AbstractImportStrategy {
         instance.registry(ImportStrategyEnum.MYBATIS_BATCH_STRATEGY.getStrategyName(), this);
     }
 
+    /**
+     * 使用SQL拼接的方法
+     * 开启rewriteBatchedStatements前
+     * 3.5s、3.4s、3.4s
+     * 开启rewriteBatchedStatements后
+     * 6.9s、6.7s、6.9s
+     */
     @Override
     public void doImport(List<Maintain> maintains) {
         StopWatch stopWatch = new StopWatch();
@@ -63,7 +70,7 @@ public class MyBatisBatchStrategy extends AbstractImportStrategy {
     }
 
     @Autowired
-    public void setStudentService(SqlSessionFactory sqlSessionFactory) {
+    public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
     }
 

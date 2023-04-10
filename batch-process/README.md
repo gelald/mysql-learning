@@ -126,6 +126,29 @@ public class MyBatisPlusBatchStrategy {
 }
 ```
 
+### rewriteBatchedStatements 参数
+
+在 JDBC 连接上添加这个参数，作用是将一批
+insert into xxx values (), insert into xxx values (), ... 转换拼接成 insert into xxx values (),(),()...
+这样一条语句的形式然后执行，这样一来跟拼接 sql 的效果是一样的。
+
+那为什么默认不给这个参数设置为 true 呢？
+
+1. 如果批量语句中的某些语句失败，则默认重写会导致所有语句都失败。
+2. 批量语句的某些语句参数不一样，则默认重写会使得查询缓存未命中。
+
+但是如果本来调用的 Mapper 就是用 SQL 拼接的方式，那么添加这个参数是会更慢的，**所以如果使用 SQL 拼接的方式这个参数需要关闭
+**。
+
+| 保存方式                                     | 数据量（条） | 耗时（秒） |
+|------------------------------------------|--------|-------|
+| JDBC 原生                                  | 30000  | 3.3   |
+| JDBC 原生（添加 rewrite 参数）                   | 30000  | 2.2   |
+| MyBatis 底层使用拼接 SQL 语句                    | 30000  | 3.5   |
+| MyBatis 底层使用拼接 SQL 语句（添加 rewrite 参数）     | 30000  | 6.8   |
+| MyBatis-Plus saveBatch 方法                | 30000  | 9.8   |
+| MyBatis-Plus saveBatch 方法（添加 rewrite 参数） | 30000  | 7.2   |
+
 ## Excel 数据批量导出、导入
 
 其实想到数据的导入导出，理所当然的会想到apache的poi技术，以及Excel的版本问题。

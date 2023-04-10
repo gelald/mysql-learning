@@ -28,6 +28,12 @@ public class MyBatisPlusBatchStrategy extends AbstractImportStrategy {
         instance.registry(ImportStrategyEnum.MYBATIS_PLUS_BATCH_STRATEGY.getStrategyName(), this);
     }
 
+    /**
+     * 开启rewriteBatchedStatements前
+     * 9.3s、9.8s、10s
+     * 开启rewriteBatchedStatements后
+     * 7.4s、7.2s、7.2s
+     */
     @Override
     public void doImport(List<Maintain> maintains) {
         StopWatch stopWatch = new StopWatch();
