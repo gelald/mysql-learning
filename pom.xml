@@ -12,6 +12,7 @@
         <module>mysql-base</module>
         <module>mybatis-plus-common</module>
         <module>batch-process</module>
+        <module>druid-datasource</module>
     </modules>
 
     <properties>
