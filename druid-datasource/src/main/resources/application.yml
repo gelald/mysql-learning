@@ -37,17 +37,18 @@ spring:
       keepAlive: true
       # Spring 监控，利用aop 对指定接口的执行时间，jdbc数进行记录
       aop-patterns: "com.springboot.template.dao.*"
-      ########### 启用内置过滤器（第一个 stat必须，否则监控不到SQL）##########
-      filters: stat,wall,log4j2
+      ########### 启用内置过滤器（第一个 stat 必须，否则监控不到SQL）##########
+      filters: stat,wall,slf4j
       # 自己配置监控统计拦截的filter
       filter:
-        # 开启druiddatasource的状态监控
+        # 开启druid datasource的状态监控
         stat:
           enabled: true
           db-type: mysql
           # 开启慢sql监控，超过2s 就认为是慢sql，记录到日志中
           log-slow-sql: true
           slow-sql-millis: 2000
+          merge-sql: true
         # 日志监控，使用slf4j 进行日志输出
         slf4j:
           enabled: true
@@ -58,17 +59,28 @@ spring:
           result-set-close-after-log-enabled: false
       ########## 配置WebStatFilter，用于采集web关联监控的数据 ##########
       web-stat-filter:
-        enabled: true                   # 启动 StatFilter
-        url-pattern: /*                 # 过滤所有url
-        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" # 排除一些不必要的url
-        session-stat-enable: true       # 开启session统计功能
-        session-stat-max-count: 1000    # session的最大个数,默认100
+        # 启动 StatFilter
+        enabled: true
+        # 过滤所有url
+        url-pattern: /*
+        # 排除一些不必要的url
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+        # 开启session统计功能
+        session-stat-enable: true
+        # session的最大个数,默认100
+        session-stat-max-count: 1000
       ########## 配置StatViewServlet（监控页面），用于展示Druid的统计信息 ##########
       stat-view-servlet:
-        enabled: true                   # 启用StatViewServlet
-        url-pattern: /druid/*           # 访问内置监控页面的路径，内置监控页面的首页是/druid/index.html
-        reset-enable: false              # 不允许清空统计数据,重新计算
-        login-username: root            # 配置监控页面访问密码
+        # 启用StatViewServlet
+        enabled: true
+        # 访问内置监控页面的路径，内置监控页面的首页是/druid/index.html
+        url-pattern: /druid/*
+        # 不允许清空统计数据,重新计算
+        reset-enable: false
+        # 配置监控页面访问密码
+        login-username: root
         login-password: 123
-        allow: 127.0.0.1           # 允许访问的地址，如果allow没有配置或者为空，则允许所有访问
-        deny:                                        # 拒绝访问的地址，deny优先于allow，如果在deny列表中，就算在allow列表中，也会被拒绝
+        # 允许访问的地址，如果allow没有配置或者为空，则允许所有访问
+        allow: 127.0.0.1
+        # 拒绝访问的地址，deny优先于allow，如果在deny列表中，就算在allow列表中，也会被拒绝
+        deny: 192.168.1.10

@@ -39,3 +39,7 @@
 ### batch-process
 
 这个模块主要介绍 MySQL 数据批量插入、批量导出到 Excel 如何高效地处理，具体请看 [batch-process](batch-process/README.md)
+
+### druid-datasource
+
+这个模块主要介绍 SpringBoot 集成 Druid 连接池，并实现 SQL 监控的功能。
